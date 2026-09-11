@@ -1,0 +1,98 @@
+name: Build and publish CloudStream plugins
+
+concurrency:
+  group: cloudstream-build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "*.md"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Setup Gradle 8.12
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "8.12"
+
+      - name: Build plugins and manifest
+        run: gradle --no-daemon make makePluginsJson --stacktrace
+
+      - name: Prepare repository output
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir -p dist
+
+          find HHKungfuProvider HH3DProvider -type f -path '*/build/*.cs3' -print -exec cp {} dist/ \;
+
+          if [ ! -s build/plugins.json ]; then
+            echo "build/plugins.json was not generated"
+            exit 1
+          fi
+
+          cp build/plugins.json dist/plugins.json
+          cp repo.json dist/repo.json
+
+          CS3_COUNT="$(find dist -maxdepth 1 -type f -name '*.cs3' | wc -l | tr -d ' ')"
+          echo "Generated ${CS3_COUNT} plugin files"
+          ls -lah dist
+
+          if [ "$CS3_COUNT" -ne 2 ]; then
+            echo "Expected exactly 2 .cs3 files, found ${CS3_COUNT}"
+            exit 1
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: cloudstream-repository
+          path: dist/
+          if-no-files-found: error
+
+      - name: Publish builds branch
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          PUBLISH_DIR="$(mktemp -d)"
+          cp -R dist/. "$PUBLISH_DIR/"
+          cd "$PUBLISH_DIR"
+
+          git init
+          git checkout -b builds
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "build: publish CloudStream plugins ${GITHUB_SHA}"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin builds
