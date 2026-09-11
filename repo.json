@@ -1,0 +1,8 @@
+{
+  "name": "HH CloudStream Providers",
+  "description": "CloudStream catalog providers for HHKungfu and HH3D",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/huyndb/hh-cloudstream-repo/builds/plugins.json"
+  ]
+}

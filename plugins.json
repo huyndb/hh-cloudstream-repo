@@ -1,0 +1,40 @@
+[
+    {
+        "fileHash": "sha256-029350135a2e5ccce2e18193ab4ed2e8523e748752ddd7fa5dcded7b27a15b1c",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/huyndb/hh-cloudstream-repo",
+        "fileSize": 19184,
+        "status": 1,
+        "language": "vi",
+        "authors": [
+            "Private HH Repo"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "HH3DProvider",
+        "description": "HH3D catalog, metadata and episode index (no protected stream extraction)",
+        "url": "https://raw.githubusercontent.com/huyndb/hh-cloudstream-repo/builds/HH3DProvider.cs3",
+        "name": "HH3DProvider"
+    },
+    {
+        "fileHash": "sha256-ecdb25a0bb376747b82c5c5bd12e8fcdbf8f9299e82c9c33c8b8e62cfb35f45d",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/huyndb/hh-cloudstream-repo",
+        "fileSize": 19538,
+        "status": 1,
+        "language": "vi",
+        "authors": [
+            "Private HH Repo"
+        ],
+        "tvTypes": [
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "HHKungfuProvider",
+        "description": "HHKungfu catalog, metadata and episode index (no protected stream extraction)",
+        "url": "https://raw.githubusercontent.com/huyndb/hh-cloudstream-repo/builds/HHKungfuProvider.cs3",
+        "name": "HHKungfuProvider"
+    }
+]
